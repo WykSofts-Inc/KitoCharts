@@ -32,7 +32,7 @@ public struct LineChartView: View {
             GeometryReader { geometry in
                 let plotRect = CGRect(x: 40, y: 0, width: geometry.size.width - 48, height: geometry.size.height - 24)
                 let domain = viewModel.points.valueRange
-                let yScale = LinearScale(domain: domain, range: plotRect.maxY...plotRect.minY)
+                let yScale = LinearScale(domain: domain, range: (plotRect.maxY, plotRect.minY))
 
                 ZStack(alignment: .topLeading) {
                     ValueAxis(domain: domain, formatter: valueFormatter)
@@ -41,7 +41,7 @@ public struct LineChartView: View {
                     ForEach(Array(viewModel.series.enumerated()), id: \.offset) { index, series in
                         let xScale = LinearScale(
                             domain: 0...Double(max(series.points.count - 1, 1)),
-                            range: plotRect.minX...plotRect.maxX
+                            range: (plotRect.minX, plotRect.maxX)
                         )
                         seriesPath(series.points, xScale: xScale, yScale: yScale)
                             .trim(from: 0, to: viewModel.revealProgress)
@@ -62,7 +62,7 @@ public struct LineChartView: View {
                             guard let first = viewModel.series.first else { return }
                             let xScale = LinearScale(
                                 domain: 0...Double(max(first.points.count - 1, 1)),
-                                range: plotRect.minX...plotRect.maxX
+                                range: (plotRect.minX, plotRect.maxX)
                             )
                             viewModel.select(pointNear: drag.location, in: first.points, xScale: xScale)
                         }

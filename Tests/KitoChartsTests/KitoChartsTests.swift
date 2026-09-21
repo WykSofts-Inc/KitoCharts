@@ -20,15 +20,35 @@ final class KitoChartsTests: XCTestCase {
     }
 
     func testLinearScaleMapsDomainToRange() {
-        let scale = LinearScale(domain: 0...100, range: 0...200)
+        let scale = LinearScale(domain: 0...100, range: (0, 200))
         XCTAssertEqual(scale.scale(0), 0)
         XCTAssertEqual(scale.scale(100), 200)
         XCTAssertEqual(scale.scale(50), 100)
     }
 
     func testLinearScaleHandlesZeroSpanDomain() {
-        let scale = LinearScale(domain: 5...5, range: 0...100)
+        let scale = LinearScale(domain: 5...5, range: (0, 100))
         XCTAssertEqual(scale.scale(5), 0)
+    }
+
+    func testLinearScaleHandlesReversedRangeWithoutCrashing() {
+        // The exact shape every chart's Y-axis needs: screen Y increases
+        // downward while values increase upward, so the low end of the
+        // domain must map to the LARGER on-screen coordinate. A
+        // ClosedRange<CGFloat>-based range would trap constructing this;
+        // the tuple-based range must not.
+        let scale = LinearScale(domain: 0...100, range: (200, 0))
+        XCTAssertEqual(scale.scale(0), 200)
+        XCTAssertEqual(scale.scale(100), 0)
+        XCTAssertEqual(scale.scale(50), 100)
+    }
+
+    func testLinearScaleHandlesNegativeSpanRangeWithoutCrashing() {
+        // A degenerate/very small view (geometry.size.height < the chart's
+        // fixed insets) can produce a negative plot height. This must
+        // render oddly, never crash.
+        let scale = LinearScale(domain: 0...10, range: (0, -5))
+        XCTAssertEqual(scale.scale(10), -5)
     }
 
     func testValueRangeIncludesAllPoints() {

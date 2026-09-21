@@ -28,7 +28,9 @@ public struct Chart3DView: View {
     }
 }
 
-private struct SceneKitView: UIViewRepresentable {
+/// Shared by every SceneKit-backed chart view in this package (bar, pie) —
+/// not `private` so `Chart3DPieView` can reuse it too.
+struct SceneKitView: UIViewRepresentable {
     let scene: SCNScene
 
     func makeUIView(context: Context) -> SCNView {

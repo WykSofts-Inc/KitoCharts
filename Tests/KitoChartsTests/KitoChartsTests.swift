@@ -84,6 +84,33 @@ final class KitoChartsTests: XCTestCase {
         XCTAssertFalse(ticks.isEmpty)
     }
 
+    #if canImport(SceneKit)
+    func testChart3DPieBuildsOneNodePerPointPlusCameraAndLights() {
+        let viewModel = Chart3DPieViewModel(points: samplePoints())
+        // One geometry node per point, plus camera + omni light + ambient light.
+        XCTAssertEqual(viewModel.scene.rootNode.childNodes.count, samplePoints().count + 3)
+    }
+
+    func testChart3DPieRebuildReflectsMutatedPoints() {
+        let viewModel = Chart3DPieViewModel(points: samplePoints())
+        viewModel.points = Array(samplePoints().prefix(2))
+        viewModel.rebuild()
+        XCTAssertEqual(viewModel.scene.rootNode.childNodes.count, 2 + 3)
+    }
+
+    func testChart3DPieHandlesEmptyPointsWithoutCrashing() {
+        let viewModel = Chart3DPieViewModel(points: [])
+        XCTAssertEqual(viewModel.scene.rootNode.childNodes.count, 0)
+    }
+
+    func testChart3DPieInnerRadiusFractionIsClampedConceptually() {
+        // Values outside 0...0.92 must not crash scene construction — the
+        // clamping happens internally; this just proves no trap either end.
+        XCTAssertNoThrow(Chart3DPieViewModel(points: samplePoints(), innerRadiusFraction: -1))
+        XCTAssertNoThrow(Chart3DPieViewModel(points: samplePoints(), innerRadiusFraction: 5))
+    }
+    #endif
+
     func testChartThemeColorWrapsAroundPalette() {
         let theme = KitoChartTheme.default
         let paletteCount = theme.categoricalPalette.count

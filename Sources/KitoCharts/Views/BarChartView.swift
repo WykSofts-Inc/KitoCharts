@@ -63,7 +63,7 @@ public struct BarChartView: View {
 
     @ViewBuilder
     private func bar(for point: ChartDataPoint, categoryIndex: Int, domain: ClosedRange<Double>, maxHeight: CGFloat) -> some View {
-        let scale = LinearScale(domain: domain, range: 0...maxHeight)
+        let scale = LinearScale(domain: domain, range: (0, maxHeight))
         let height = max(scale.scale(point.value), 2) * viewModel.growProgress
         let isHighlighted = viewModel.highlightedPointID == point.id
 

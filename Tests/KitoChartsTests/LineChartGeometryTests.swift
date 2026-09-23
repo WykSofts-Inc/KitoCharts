@@ -82,8 +82,10 @@ final class LineChartGeometryTests: XCTestCase {
         XCTAssertEqual(LineChartGeometry.domain(for: data([100, 200]), style: .default), 100...200)
     }
 
-    func testAnAreaFillAlwaysIncludesZero() {
-        XCTAssertEqual(LineChartGeometry.domain(for: data([-40, -10]), style: .area), -40...0)
+    func testAnAreaFillKeepsTheDataRangeUnlessAskedForZero() {
+        XCTAssertEqual(LineChartGeometry.domain(for: data([170, 180]), style: LineChartStyle(area: .gradient(opacity: 0.3))), 170...180,
+                       "a stock chart's fill must not squash the line against the top")
+        XCTAssertEqual(LineChartGeometry.domain(for: data([-40, -10]), style: .area), -40...0, "the .area preset anchors at zero")
     }
 
     func testAFlatSeriesStillGetsAUsableDomain() {

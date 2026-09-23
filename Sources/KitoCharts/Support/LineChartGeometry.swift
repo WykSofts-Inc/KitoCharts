@@ -20,7 +20,7 @@ enum LineChartGeometry {
             lower = min(lower, line.value)
             upper = max(upper, line.value)
         }
-        if style.includesZero || style.area != .none {
+        if style.includesZero {
             lower = min(lower, 0)
             upper = max(upper, 0)
         }

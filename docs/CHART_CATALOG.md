@@ -9,7 +9,7 @@ honest roadmap, not a claim that everything below already exists.
 | Chart | Status | Notes |
 | --- | --- | --- |
 | Line | ✅ Shipped | `LineChartViewModel` / `LineChartView`. Multi-series, drag-to-inspect; `LineChartStyle` adds linear / smooth / Catmull–Rom / stepped lines, point markers, dashes, gradient strokes, glow, value and x-axis labels, reference lines and a sparkline preset. |
-| Area | ✅ Shipped | `LineChartStyle.area`: solid or gradient fill under `LineChartView`'s path, down to zero. |
+| Area | ✅ Shipped | `LineChartStyle.area`: solid or gradient fill under `LineChartView`'s path, to zero when the axis includes it, else to the plot's bottom. |
 | Bar (vertical/horizontal, grouped) | ✅ Shipped | `BarChartViewModel` / `BarChartView`. |
 | Stacked bar | 🔲 Planned | Extend `BarChartViewModel.groupedByLabel` to stack rather than cluster. |
 | Scatter | 🔲 Planned | New ViewModel: two-value points (x, y) instead of (label, value). |

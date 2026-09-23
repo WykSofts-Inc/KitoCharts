@@ -34,7 +34,8 @@ public enum LinePointStyle: Equatable, Sendable {
     case lastPoint
 }
 
-/// What `LineChartView` draws under each line.
+/// What `LineChartView` draws under each line: down to zero when the axis includes it, otherwise
+/// to the bottom of the plot, so a price moving between 170 and 180 still fills its chart.
 public enum LineAreaFill: Equatable, Sendable {
     case none
     /// A flat fill in the series colour.

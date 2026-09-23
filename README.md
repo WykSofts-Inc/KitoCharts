@@ -51,6 +51,27 @@ PieChartView(viewModel: pie)
 Chart3DView(viewModel: chart3D)
 ```
 
+## Line styles
+
+`LineChartView` takes a `LineChartStyle` for everything about how the line looks:
+
+```swift
+LineChartView(viewModel: viewModel, style: LineChartStyle(
+    interpolation: .catmullRom,          // .linear, .smooth, .catmullRom, .stepped
+    points: .hollow,                     // .filled, .hollow, .halo, .lastPoint (pulsing)
+    area: .gradient(opacity: 0.35),      // or .solid(opacity:)
+    showsLabels: true,                   // x-axis labels, thinned when crowded
+    referenceLines: [LineReferenceLine("Goal", value: 250, color: .green)]
+))
+
+LineChartView(viewModel: viewModel, style: .sparkline)   // axis-free, for rows and tiles
+LineChartView(viewModel: viewModel, style: .area)        // filled area chart
+```
+
+Also: `lineWidth`, `dash`, `pointSize`, `strokeGradient`, `glows`, `showsValueAxis`,
+`showsValues`, `includesZero` and `animatesIn`. The default style draws exactly what
+`LineChartView` always drew.
+
 ## Theming
 
 ```swift

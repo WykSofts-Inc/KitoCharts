@@ -22,7 +22,9 @@ public struct Chart3DPieView: View {
 
     public var body: some View {
         SceneKitView(scene: viewModel.scene)
-            .frame(minHeight: 260)
+            // 260 when the caller says nothing; a caller's own .frame(height:) down to 120 wins
+            // instead of overflowing onto neighbouring views.
+            .frame(minHeight: 120, idealHeight: 260)
     }
 }
 #else

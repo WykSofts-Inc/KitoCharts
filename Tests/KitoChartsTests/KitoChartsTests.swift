@@ -8,6 +8,9 @@
 
 import XCTest
 @testable import KitoCharts
+#if canImport(SceneKit)
+import SceneKit
+#endif
 
 final class KitoChartsTests: XCTestCase {
     private func samplePoints() -> [ChartDataPoint] {
@@ -108,6 +111,16 @@ final class KitoChartsTests: XCTestCase {
         // clamping happens internally; this just proves no trap either end.
         XCTAssertNoThrow(Chart3DPieViewModel(points: samplePoints(), innerRadiusFraction: -1))
         XCTAssertNoThrow(Chart3DPieViewModel(points: samplePoints(), innerRadiusFraction: 5))
+    }
+
+    /// The default 0.6 flatness draws rings as visible polygons.
+    func testChart3DPieWedgesAreTessellatedFinely() throws {
+        let viewModel = Chart3DPieViewModel(points: samplePoints(), innerRadiusFraction: 0.7)
+        let shapes = viewModel.scene.rootNode.childNodes.compactMap { $0.geometry as? SCNShape }
+        XCTAssertEqual(shapes.count, samplePoints().count)
+        for shape in shapes {
+            XCTAssertLessThanOrEqual(try XCTUnwrap(shape.path).flatness, 0.01)
+        }
     }
     #endif
 

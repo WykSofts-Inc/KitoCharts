@@ -113,6 +113,9 @@ public final class Chart3DPieViewModel: KitoViewModel {
     /// to `SCNShape` for extrusion instead of a SwiftUI `Path`.
     private static func wedgePath(outerRadius: CGFloat, innerRadius: CGFloat, startAngle: CGFloat, endAngle: CGFloat) -> UIBezierPath {
         let path = UIBezierPath()
+        // SCNShape tessellates curves to within `flatness` points; the 0.6 default turns a
+        // 2.2-radius ring into a visible polygon.
+        path.flatness = 0.01
         let outerStart = CGPoint(x: cos(startAngle) * outerRadius, y: sin(startAngle) * outerRadius)
         path.move(to: outerStart)
         path.addArc(withCenter: .zero, radius: outerRadius, startAngle: startAngle, endAngle: endAngle, clockwise: true)

@@ -86,6 +86,14 @@ ContentView()
 Every chart reads `@Environment(\.kitoChartTheme)`. Set it once at the root to
 retint every chart in the tree.
 
+## Right-to-left
+
+Line and bar charts mirror automatically in right-to-left layouts: the value axis sits on the
+leading (right) edge and the first data point is drawn at the leading side, so time runs
+right to left. Scrubbing a `LineChartView` follows the finger in both directions, and the pie
+chart's selected-slice share is formatted for the current locale. Pie slices run
+counter-clockwise under RTL. Pass a locale-aware `valueFormatter` for axis and value labels.
+
 ## Architecture
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — this package is the

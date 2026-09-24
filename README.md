@@ -1,5 +1,7 @@
 # KitoCharts
 
+**[Documentation](https://wyksofts-inc.github.io/KitoCharts/documentation/kitocharts/)**
+
 Compose-native, MVVM charting for SwiftUI — line, bar, pie/donut, and 3D bar
 charts today; a full DevKit-ChartKit-equivalent catalog on the roadmap (see
 [docs/CHART_CATALOG.md](docs/CHART_CATALOG.md)). One shared theme, one shared

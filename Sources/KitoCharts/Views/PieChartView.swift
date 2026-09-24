@@ -65,7 +65,7 @@ public struct PieChartView: View {
                     if let selected = viewModel.slices.first(where: { $0.id == viewModel.selectedSliceID }) {
                         VStack(spacing: 2) {
                             Text(selected.point.label).font(.caption.bold())
-                            Text("\(Int(selected.fraction * 100))%").font(.caption2).foregroundStyle(.secondary)
+                            Text(selected.fraction, format: .percent.precision(.fractionLength(0))).font(.caption2).foregroundStyle(.secondary)
                         }
                     } else if let centerContent {
                         centerContent

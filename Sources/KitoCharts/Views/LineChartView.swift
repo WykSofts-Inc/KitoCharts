@@ -14,6 +14,7 @@ import KitoCore
 /// Pass a `LineChartStyle` for markers, area fills, step lines, labels, goal lines and more.
 public struct LineChartView: View {
     @Environment(\.kitoChartTheme) private var theme
+    @Environment(\.layoutDirection) private var layoutDirection
     @Bindable var viewModel: LineChartViewModel
     let style: LineChartStyle
     let showLegend: Bool
@@ -75,7 +76,11 @@ public struct LineChartView: View {
                     DragGesture(minimumDistance: 0)
                         .onChanged { drag in
                             guard let first = viewModel.series.first else { return }
-                            viewModel.select(pointNear: drag.location, in: first.points, xScale: xScale(count: first.points.count, plotRect: plotRect))
+                            // The plot is drawn mirrored in right-to-left layouts, but drag locations
+                            // are physical: flip x so the nearest point is found in plot coordinates.
+                            var location = drag.location
+                            if layoutDirection == .rightToLeft { location.x = geometry.size.width - location.x }
+                            viewModel.select(pointNear: location, in: first.points, xScale: xScale(count: first.points.count, plotRect: plotRect))
                         }
                         .onEnded { _ in viewModel.clearSelection() }
                 )

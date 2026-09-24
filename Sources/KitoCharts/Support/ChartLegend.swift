@@ -14,9 +14,21 @@ import KitoCore
 public struct ChartLegend: View {
     @Environment(\.kitoChartTheme) private var theme
     let categories: [String]
+    let colors: [Color]
+    let highlighted: Int?
 
-    public init(categories: [String]) {
+    /// - Parameters:
+    ///   - categories: the labels, in order.
+    ///   - colors: a colour per label; labels without one use the theme's palette by position.
+    ///   - highlighted: index of the entry to emphasise (the others dim), e.g. the selected slice.
+    public init(categories: [String], colors: [Color] = [], highlighted: Int? = nil) {
         self.categories = categories
+        self.colors = colors
+        self.highlighted = highlighted
+    }
+
+    private func color(at index: Int) -> Color {
+        colors.indices.contains(index) ? colors[index] : theme.color(forCategoryIndex: index)
     }
 
     public var body: some View {
@@ -24,12 +36,13 @@ public struct ChartLegend: View {
             ForEach(Array(categories.enumerated()), id: \.offset) { index, category in
                 HStack(spacing: 6) {
                     Circle()
-                        .fill(theme.color(forCategoryIndex: index))
+                        .fill(color(at: index))
                         .frame(width: 8, height: 8)
                     Text(category)
                         .font(.caption)
                         .foregroundStyle(theme.axisLabelColor)
                 }
+                .opacity(highlighted == nil || highlighted == index ? 1 : 0.4)
             }
         }
     }

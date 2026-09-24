@@ -15,10 +15,35 @@ public struct PieChartView: View {
     @Environment(\.kitoChartTheme) private var theme
     @Bindable var viewModel: PieChartViewModel
     let showLegend: Bool
+    let centerContent: AnyView?
 
     public init(viewModel: PieChartViewModel, showLegend: Bool = true) {
         self.viewModel = viewModel
         self.showLegend = showLegend
+        self.centerContent = nil
+    }
+
+    /// A pie or donut with `center` drawn in the middle while no slice is selected, e.g. the
+    /// total for a donut (`innerRadiusFraction` > 0). Selecting a slice swaps it for that
+    /// slice's label and share.
+    ///
+    /// ```swift
+    /// PieChartView(viewModel: spending) {
+    ///     VStack { Text("Total").font(.caption); Text("$1,240").font(.title3.bold()) }
+    /// }
+    /// ```
+    public init<Center: View>(viewModel: PieChartViewModel, showLegend: Bool = true, @ViewBuilder center: () -> Center) {
+        self.viewModel = viewModel
+        self.showLegend = showLegend
+        self.centerContent = AnyView(center())
+    }
+
+    /// One colour per point, used by the slice, the legend and the selection alike: the
+    /// point's own `color`, or the theme's palette by position.
+    private func color(at index: Int) -> Color {
+        viewModel.points.indices.contains(index)
+            ? viewModel.points[index].color ?? theme.color(forCategoryIndex: index)
+            : theme.color(forCategoryIndex: index)
     }
 
     public var body: some View {
@@ -30,7 +55,7 @@ public struct PieChartView: View {
                 ZStack {
                     ForEach(Array(viewModel.slices.enumerated()), id: \.element.id) { index, slice in
                         sliceShape(slice, center: center, radius: radius)
-                            .fill(slice.point.color ?? theme.color(forCategoryIndex: index))
+                            .fill(color(at: index))
                             .scaleEffect(viewModel.selectedSliceID == slice.id ? 1.05 : 1.0)
                             .opacity(viewModel.revealProgress)
                             .animation(.easeOut(duration: theme.animationDuration), value: viewModel.revealProgress)
@@ -42,13 +67,21 @@ public struct PieChartView: View {
                             Text(selected.point.label).font(.caption.bold())
                             Text("\(Int(selected.fraction * 100))%").font(.caption2).foregroundStyle(.secondary)
                         }
+                    } else if let centerContent {
+                        centerContent
+                            .frame(maxWidth: radius * 2 * max(viewModel.innerRadiusFraction, 0.5) * 0.9)
+                            .allowsHitTesting(false)
                     }
                 }
             }
             .aspectRatio(1, contentMode: .fit)
 
             if showLegend {
-                ChartLegend(categories: viewModel.points.map(\.label))
+                ChartLegend(
+                    categories: viewModel.points.map(\.label),
+                    colors: viewModel.points.indices.map { color(at: $0) },
+                    highlighted: viewModel.points.firstIndex { $0.id == viewModel.selectedSliceID }
+                )
             }
         }
         .onAppear { viewModel.reveal(duration: theme.animationDuration) }
